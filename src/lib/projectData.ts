@@ -499,3 +499,18 @@ export const mockProjects: Project[] = [
     units: generateUnitsForProject('zanzibar', 27, baseInfrastructure, true)
   }
 ];
+
+// Updated function to fetch projects from database
+import { fetchProjects, fetchProject } from './supabaseService';
+
+// Keep the original functions for backward compatibility and migration
+export { mockProjects as staticProjects };
+
+// New async functions that replace the static data
+export async function getProjects(): Promise<Project[]> {
+  return await fetchProjects();
+}
+
+export async function getProject(id: string): Promise<Project | null> {
+  return await fetchProject(id);
+}

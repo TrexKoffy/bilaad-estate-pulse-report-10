@@ -1,19 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardStats } from "@/components/DashboardStats";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { mockProjects } from "@/lib/projectData";
-import { FileText, Calendar, Download, Filter, Search } from "lucide-react";
+import { getProjects, type Project } from "@/lib/projectData";
+import { migrateStaticData, checkMigrationStatus } from "@/lib/dataMigration";
+import { FileText, Calendar, Download, Filter, Search, Database, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import bilaadHeader from "@/assets/bilaad-header.jpg";
 
 export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [migrating, setMigrating] = useState(false);
+  const [migrationStatus, setMigrationStatus] = useState({ migrated: false, projectCount: 0, unitCount: 0 });
 
-  const filteredProjects = mockProjects.filter(project => {
+  // Load projects from database
+  useEffect(() => {
+    loadProjects();
+    checkMigration();
+  }, []);
+
+  const loadProjects = async () => {
+    setLoading(true);
+    try {
+      const projectsData = await getProjects();
+      setProjects(projectsData);
+    } catch (error) {
+      console.error('Error loading projects:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkMigration = async () => {
+    const status = await checkMigrationStatus();
+    setMigrationStatus(status);
+  };
+
+  const handleMigration = async () => {
+    setMigrating(true);
+    try {
+      const result = await migrateStaticData();
+      if (result.success) {
+        await loadProjects();
+        await checkMigration();
+        console.log(result.message);
+      } else {
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error('Migration failed:', error);
+    } finally {
+      setMigrating(false);
+    }
+  };
+
+  const filteredProjects = projects.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || project.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -62,8 +108,53 @@ export default function Dashboard() {
       </div>
 
       <div className="container mx-auto px-6 py-8 space-y-8">
+        {/* Migration Status */}
+        {!migrationStatus.migrated && (
+          <Card className="border-0 shadow-card bg-warning/5 border-warning/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-warning">
+                <Database className="h-5 w-5" />
+                Database Migration Required
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Your data needs to be migrated to the database. Click the button to start the migration process.
+                </p>
+                <Button 
+                  onClick={handleMigration} 
+                  disabled={migrating}
+                  className="ml-4"
+                >
+                  {migrating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Migrating...
+                    </>
+                  ) : (
+                    <>
+                      <Database className="h-4 w-4 mr-2" />
+                      Migrate Data
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Stats Overview */}
-        <DashboardStats projects={mockProjects} />
+        {loading ? (
+          <Card className="border-0 shadow-card">
+            <CardContent className="text-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+              <p className="text-muted-foreground">Loading dashboard data...</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <DashboardStats projects={projects} />
+        )}
 
         {/* Filters and Search */}
         <Card className="border-0 shadow-card">
@@ -125,10 +216,14 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {filteredProjects.length === 0 && (
+        {filteredProjects.length === 0 && !loading && (
           <Card className="border-0 shadow-card">
             <CardContent className="text-center py-12">
-              <p className="text-muted-foreground">No projects found matching your criteria.</p>
+              <p className="text-muted-foreground">
+                {migrationStatus.migrated 
+                  ? "No projects found matching your criteria." 
+                  : "No projects available. Please migrate your data first."}
+              </p>
             </CardContent>
           </Card>
         )}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { mockProjects } from "@/lib/projectData";
+import { getProject, type Project } from "@/lib/projectData";
 import UnitCard from "@/components/UnitCard";
 import { 
   ArrowLeft, 
@@ -23,18 +23,58 @@ import {
   FileText,
   Edit3,
   Save,
-  Home
+  Home,
+  Loader2
 } from "lucide-react";
 
 export default function ProjectDetail() {
   const { projectId } = useParams();
-  const project = mockProjects.find(p => p.id === projectId);
+  const [project, setProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editableNotes, setEditableNotes] = useState({
-    weekly: project?.weeklyNotes || "",
-    monthly: project?.monthlyNotes || "",
-    targetMilestone: project?.targetMilestone || ""
+    weekly: "",
+    monthly: "",
+    targetMilestone: ""
   });
+
+  useEffect(() => {
+    loadProject();
+  }, [projectId]);
+
+  const loadProject = async () => {
+    if (!projectId) return;
+    
+    setLoading(true);
+    try {
+      const projectData = await getProject(projectId);
+      setProject(projectData);
+      if (projectData) {
+        setEditableNotes({
+          weekly: projectData.weeklyNotes || "",
+          monthly: projectData.monthlyNotes || "",
+          targetMilestone: projectData.targetMilestone || ""
+        });
+      }
+    } catch (error) {
+      console.error('Error loading project:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
+        <Card className="border-0 shadow-card">
+          <CardContent className="text-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading project details...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!project) {
     return (
@@ -42,7 +82,7 @@ export default function ProjectDetail() {
         <Card className="border-0 shadow-card">
           <CardContent className="text-center py-12">
             <h2 className="text-2xl font-bold mb-4">Project Not Found</h2>
-            <Link to="/">
+            <Link to="/dashboard">
               <Button>Return to Dashboard</Button>
             </Link>
           </CardContent>
@@ -78,7 +118,7 @@ export default function ProjectDetail() {
         <div className="container mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link to="/">
+              <Link to="/dashboard">
                 <Button variant="outline" className="bg-primary/10 border-primary/20 text-white hover:bg-primary/20">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Dashboard

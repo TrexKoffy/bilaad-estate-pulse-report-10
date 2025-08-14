@@ -14,7 +14,143 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      projects: {
+        Row: {
+          activities_in_progress: Json | null
+          budget: string
+          challenges: Json | null
+          completed_activities: Json | null
+          completed_units: number
+          created_at: string
+          current_phase: string
+          id: string
+          location: string
+          manager: string
+          monthly_notes: string | null
+          name: string
+          progress: number
+          progress_images: Json | null
+          start_date: string
+          status: string
+          target_completion: string
+          target_milestone: string
+          total_units: number
+          updated_at: string
+          weekly_notes: string | null
+        }
+        Insert: {
+          activities_in_progress?: Json | null
+          budget: string
+          challenges?: Json | null
+          completed_activities?: Json | null
+          completed_units?: number
+          created_at?: string
+          current_phase: string
+          id?: string
+          location: string
+          manager: string
+          monthly_notes?: string | null
+          name: string
+          progress?: number
+          progress_images?: Json | null
+          start_date: string
+          status: string
+          target_completion: string
+          target_milestone: string
+          total_units?: number
+          updated_at?: string
+          weekly_notes?: string | null
+        }
+        Update: {
+          activities_in_progress?: Json | null
+          budget?: string
+          challenges?: Json | null
+          completed_activities?: Json | null
+          completed_units?: number
+          created_at?: string
+          current_phase?: string
+          id?: string
+          location?: string
+          manager?: string
+          monthly_notes?: string | null
+          name?: string
+          progress?: number
+          progress_images?: Json | null
+          start_date?: string
+          status?: string
+          target_completion?: string
+          target_milestone?: string
+          total_units?: number
+          updated_at?: string
+          weekly_notes?: string | null
+        }
+        Relationships: []
+      }
+      units: {
+        Row: {
+          activities: Json
+          bedrooms: number | null
+          challenges: Json | null
+          created_at: string
+          current_phase: string
+          id: string
+          last_updated: string
+          photos: Json | null
+          progress: number
+          project_id: string
+          status: string
+          sub_type: string | null
+          target_completion: string
+          type: string
+          unit_number: string
+          updated_at: string
+        }
+        Insert: {
+          activities?: Json
+          bedrooms?: number | null
+          challenges?: Json | null
+          created_at?: string
+          current_phase: string
+          id?: string
+          last_updated: string
+          photos?: Json | null
+          progress?: number
+          project_id: string
+          status: string
+          sub_type?: string | null
+          target_completion: string
+          type: string
+          unit_number: string
+          updated_at?: string
+        }
+        Update: {
+          activities?: Json
+          bedrooms?: number | null
+          challenges?: Json | null
+          created_at?: string
+          current_phase?: string
+          id?: string
+          last_updated?: string
+          photos?: Json | null
+          progress?: number
+          project_id?: string
+          status?: string
+          sub_type?: string | null
+          target_completion?: string
+          type?: string
+          unit_number?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "units_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
