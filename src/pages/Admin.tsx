@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { fetchProjects } from '@/lib/supabaseService';
-import { type Project } from '@/lib/projectData';
+import { fetchProjects, deleteUnit } from '@/lib/supabaseService';
+import { type Project, type Unit } from '@/lib/projectData';
 import AdminProjectCard from '@/components/AdminProjectCard';
 import ProjectForm from '@/components/ProjectForm';
-import UnitCard from '@/components/UnitCard';
+import AdminUnitCard from '@/components/AdminUnitCard';
+import UnitForm from '@/components/UnitForm';
 import { Plus, LogOut, Users, Building2, RefreshCw } from 'lucide-react';
 
 export default function Admin() {
@@ -18,6 +20,9 @@ export default function Admin() {
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | undefined>();
   const [showUnits, setShowUnits] = useState<Project | null>(null);
+  const [showUnitForm, setShowUnitForm] = useState(false);
+  const [editingUnit, setEditingUnit] = useState<Unit | undefined>();
+  const [deletingUnit, setDeletingUnit] = useState<Unit | null>(null);
   const { signOut, user } = useAuth();
   const { toast } = useToast();
 
@@ -60,6 +65,54 @@ export default function Admin() {
 
   const handleProjectFormSave = () => {
     loadProjects();
+  };
+
+  const handleEditUnit = (unit: Unit) => {
+    setEditingUnit(unit);
+    setShowUnitForm(true);
+  };
+
+  const handleDeleteUnit = (unit: Unit) => {
+    setDeletingUnit(unit);
+  };
+
+  const confirmDeleteUnit = async () => {
+    if (!deletingUnit) return;
+
+    try {
+      const { error } = await deleteUnit(deletingUnit.id);
+      if (error) throw error;
+
+      toast({
+        title: 'Unit Deleted',
+        description: `Unit ${deletingUnit.unitNumber} has been deleted successfully.`
+      });
+
+      setDeletingUnit(null);
+      loadProjects();
+    } catch (error) {
+      console.error('Error deleting unit:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete unit. Please try again.',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleUnitFormClose = () => {
+    setShowUnitForm(false);
+    setEditingUnit(undefined);
+  };
+
+  const handleUnitFormSave = () => {
+    loadProjects();
+    handleUnitFormClose();
+  };
+
+  const handleCreateUnit = () => {
+    setEditingUnit(undefined);
+    setShowUnitForm(true);
   };
 
   return (
@@ -184,25 +237,69 @@ export default function Admin() {
               <h3 className="text-lg font-semibold">
                 Units for {showUnits?.name}
               </h3>
-              <Button variant="outline" onClick={() => setShowUnits(null)}>
-                Close
-              </Button>
+              <div className="flex gap-2">
+                <Button onClick={handleCreateUnit}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Unit
+                </Button>
+                <Button variant="outline" onClick={() => setShowUnits(null)}>
+                  Close
+                </Button>
+              </div>
             </div>
             
             {showUnits?.units && showUnits.units.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {showUnits.units.map((unit) => (
-                  <UnitCard key={unit.id} unit={unit} />
+                  <AdminUnitCard 
+                    key={unit.id} 
+                    unit={unit} 
+                    onEdit={handleEditUnit}
+                    onDelete={handleDeleteUnit}
+                  />
                 ))}
               </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                No units found for this project.
+                <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No Units Found</h3>
+                <p className="text-muted-foreground mb-4">Get started by creating the first unit for this project.</p>
+                <Button onClick={handleCreateUnit}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Unit
+                </Button>
               </div>
             )}
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Unit Form Dialog */}
+      <UnitForm
+        unit={editingUnit}
+        projectId={showUnits?.id || ''}
+        open={showUnitForm}
+        onOpenChange={setShowUnitForm}
+        onSave={handleUnitFormSave}
+      />
+
+      {/* Delete Unit Confirmation */}
+      <AlertDialog open={!!deletingUnit} onOpenChange={() => setDeletingUnit(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Unit</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete unit "{deletingUnit?.unitNumber}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteUnit} className="bg-danger text-danger-foreground hover:bg-danger/90">
+              Delete Unit
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
