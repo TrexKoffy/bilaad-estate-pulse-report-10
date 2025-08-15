@@ -165,6 +165,9 @@ export default function Dashboard() {
                 Project Portfolio
               </CardTitle>
               <div className="flex gap-4 items-center">
+                <Button variant="outline" asChild>
+                  <a href="/admin">Admin Panel</a>
+                </Button>
                 <div className="relative">
                   <Search className="h-4 w-4 absolute left-3 top-3 text-muted-foreground" />
                   <Input
