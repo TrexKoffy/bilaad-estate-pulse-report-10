@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,20 +26,18 @@ interface UnitFormProps {
 
 export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }: UnitFormProps) {
   const [loading, setLoading] = useState(false);
-  const [targetDate, setTargetDate] = useState<Date | undefined>(
-    unit?.targetCompletion ? new Date(unit.targetCompletion) : undefined
-  );
+  const [targetDate, setTargetDate] = useState<Date | undefined>();
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
-    unitNumber: unit?.unitNumber || '',
-    type: unit?.type || 'Villa',
-    subType: unit?.subType || '',
-    bedrooms: unit?.bedrooms || 3,
-    status: unit?.status || 'in-progress',
-    progress: unit?.progress || 0,
-    currentPhase: unit?.currentPhase || 'Foundation',
-    activities: JSON.stringify(unit?.activities || {
+    unitNumber: '',
+    type: '',
+    subType: '',
+    bedrooms: 3,
+    status: 'in-progress' as Unit['status'],
+    progress: 0,
+    currentPhase: 'Foundation',
+    activities: JSON.stringify({
       foundation: 'in-progress',
       structure: 'in-progress',
       roofing: 'in-progress',
@@ -47,9 +45,57 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
       interior: 'in-progress',
       finishing: 'in-progress'
     }, null, 2),
-    challenges: JSON.stringify(unit?.challenges || [], null, 2),
-    photos: JSON.stringify(unit?.photos || [], null, 2)
+    challenges: JSON.stringify([], null, 2),
+    photos: JSON.stringify([], null, 2)
   });
+
+  // Effect to populate form data when unit prop changes
+  useEffect(() => {
+    if (unit) {
+      setFormData({
+        unitNumber: unit.unitNumber || '',
+        type: unit.type || '',
+        subType: unit.subType || '',
+        bedrooms: unit.bedrooms || 3,
+        status: unit.status || 'in-progress',
+        progress: unit.progress || 0,
+        currentPhase: unit.currentPhase || 'Foundation',
+        activities: JSON.stringify(unit.activities || {
+          foundation: 'in-progress',
+          structure: 'in-progress',
+          roofing: 'in-progress',
+          mep: 'in-progress',
+          interior: 'in-progress',
+          finishing: 'in-progress'
+        }, null, 2),
+        challenges: JSON.stringify(unit.challenges || [], null, 2),
+        photos: JSON.stringify(unit.photos || [], null, 2)
+      });
+      setTargetDate(unit.targetCompletion ? new Date(unit.targetCompletion) : undefined);
+    } else {
+      // Reset form for new unit
+      setFormData({
+        unitNumber: '',
+        type: '',
+        subType: '',
+        bedrooms: 3,
+        status: 'in-progress',
+        progress: 0,
+        currentPhase: 'Foundation',
+        activities: JSON.stringify({
+          foundation: 'in-progress',
+          structure: 'in-progress',
+          roofing: 'in-progress',
+          mep: 'in-progress',
+          interior: 'in-progress',
+          finishing: 'in-progress'
+        }, null, 2),
+        challenges: JSON.stringify([], null, 2),
+        photos: JSON.stringify([], null, 2)
+      });
+      setTargetDate(undefined);
+    }
+  }, [unit]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +118,37 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
         return;
       }
 
+      // Validate required fields
+      if (!formData.unitNumber.trim()) {
+        toast({
+          title: 'Validation Error',
+          description: 'Unit Number is required.',
+          variant: 'destructive'
+        });
+        setLoading(false);
+        return;
+      }
+
+      if (!formData.type.trim()) {
+        toast({
+          title: 'Validation Error',
+          description: 'Type is required.',
+          variant: 'destructive'
+        });
+        setLoading(false);
+        return;
+      }
+
+      if (!projectId) {
+        toast({
+          title: 'Validation Error',
+          description: 'Project ID is missing. Please try again.',
+          variant: 'destructive'
+        });
+        setLoading(false);
+        return;
+      }
+
       const unitData = {
         unitNumber: formData.unitNumber,
         type: formData.type as Unit['type'],
@@ -87,16 +164,51 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
         lastUpdated: format(new Date(), 'PPP')
       };
 
+      console.log('Submitting unit data:', { unitData, projectId, isEdit: !!unit });
+
       let result;
       if (unit) {
+        console.log('Updating unit with ID:', unit.id);
         result = await updateUnit(unit.id, unitData);
       } else {
+        console.log('Creating new unit with project ID:', projectId);
         result = await createUnit({ ...unitData, projectId });
       }
 
+      console.log('Supabase result:', result);
+
       if (result.error) {
-        throw result.error;
+        console.error('Supabase error details:', {
+          error: result.error,
+          message: result.error.message,
+          details: result.error.details,
+          hint: result.error.hint,
+          code: result.error.code
+        });
+        
+        // Provide specific error messages based on error type
+        let errorMessage = `Failed to ${unit ? 'update' : 'create'} unit.`;
+        
+        if (result.error.code === '23505') {
+          errorMessage = 'A unit with this number already exists in the project.';
+        } else if (result.error.code === '23503') {
+          errorMessage = 'Invalid project reference. Please refresh and try again.';
+        } else if (result.error.code === '23514') {
+          errorMessage = 'Data validation failed. Please check your input values.';
+        } else if (result.error.message) {
+          errorMessage = result.error.message;
+        }
+        
+        toast({
+          title: 'Database Error',
+          description: errorMessage,
+          variant: 'destructive'
+        });
+        setLoading(false);
+        return;
       }
+
+      console.log('Unit saved successfully:', result.data);
 
       toast({
         title: unit ? 'Unit Updated' : 'Unit Created',
@@ -105,11 +217,26 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
 
       onSave();
       onOpenChange(false);
-    } catch (error) {
-      console.error('Error saving unit:', error);
+    } catch (error: any) {
+      console.error('Unexpected error saving unit:', {
+        error,
+        message: error?.message,
+        stack: error?.stack,
+        unitData: formData,
+        projectId
+      });
+      
+      let errorMessage = `Failed to ${unit ? 'update' : 'create'} unit. `;
+      
+      if (error?.message) {
+        errorMessage += `Error: ${error.message}`;
+      } else {
+        errorMessage += 'Please check the console for details and try again.';
+      }
+      
       toast({
-        title: 'Error',
-        description: `Failed to ${unit ? 'update' : 'create'} unit. Please try again.`,
+        title: 'Unexpected Error',
+        description: errorMessage,
         variant: 'destructive'
       });
     } finally {
@@ -144,21 +271,13 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
 
                 <div>
                   <Label htmlFor="type">Type</Label>
-                  <Select
+                  <Input
+                    id="type"
                     value={formData.type}
-                    onValueChange={(value) => setFormData({ ...formData, type: value as Unit['type'] })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Villa">Villa</SelectItem>
-                      <SelectItem value="Townhouse">Townhouse</SelectItem>
-                      <SelectItem value="Apartment">Apartment</SelectItem>
-                      <SelectItem value="Luxury Villa">Luxury Villa</SelectItem>
-                      <SelectItem value="Infrastructure">Infrastructure</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                    placeholder="e.g., Villa, Townhouse, Custom Building, Office Space"
+                    required
+                  />
                 </div>
 
                 <div>
