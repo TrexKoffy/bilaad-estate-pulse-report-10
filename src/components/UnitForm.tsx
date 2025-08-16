@@ -49,9 +49,51 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
     photos: JSON.stringify([], null, 2)
   });
 
+  // Helper function to parse various date formats
+  const parseFlexibleDate = (dateString: string): Date | undefined => {
+    if (!dateString) return undefined;
+    
+    console.log('Parsing date string:', dateString);
+    
+    // Try parsing as-is first
+    let date = new Date(dateString);
+    if (!isNaN(date.getTime())) {
+      console.log('Parsed successfully as-is:', date);
+      return date;
+    }
+    
+    // Handle "Month DDth, YYYY" format (e.g., "August 30th, 2025")
+    const verboseMatch = dateString.match(/^(\w+)\s+(\d+)(?:st|nd|rd|th),?\s+(\d{4})$/);
+    if (verboseMatch) {
+      const [, month, day, year] = verboseMatch;
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                         'July', 'August', 'September', 'October', 'November', 'December'];
+      const monthIndex = monthNames.indexOf(month);
+      if (monthIndex !== -1) {
+        date = new Date(parseInt(year), monthIndex, parseInt(day));
+        console.log('Parsed verbose format:', date);
+        return date;
+      }
+    }
+    
+    // Handle MM/DD/YYYY format
+    const shortMatch = dateString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (shortMatch) {
+      const [, month, day, year] = shortMatch;
+      date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      console.log('Parsed MM/DD/YYYY format:', date);
+      return date;
+    }
+    
+    console.warn('Could not parse date:', dateString);
+    return undefined;
+  };
+
   // Effect to populate form data when unit prop changes
   useEffect(() => {
     if (unit) {
+      console.log('Loading unit for edit:', unit);
+      
       setFormData({
         unitNumber: unit.unitNumber || '',
         type: unit.type || '',
@@ -71,7 +113,11 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
         challenges: JSON.stringify(unit.challenges || [], null, 2),
         photos: JSON.stringify(unit.photos || [], null, 2)
       });
-      setTargetDate(unit.targetCompletion ? new Date(unit.targetCompletion) : undefined);
+      
+      // Parse target completion date safely
+      const parsedDate = parseFlexibleDate(unit.targetCompletion);
+      setTargetDate(parsedDate);
+      console.log('Set target date:', parsedDate);
     } else {
       // Reset form for new unit
       setFormData({
@@ -156,12 +202,12 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
         bedrooms: formData.bedrooms,
         status: formData.status as Unit['status'],
         progress: formData.progress,
-        targetCompletion: targetDate ? format(targetDate, 'PPP') : format(new Date(), 'PPP'),
+        targetCompletion: targetDate ? format(targetDate, 'M/d/yyyy') : format(new Date(), 'M/d/yyyy'),
         currentPhase: formData.currentPhase,
         activities,
         challenges,
         photos,
-        lastUpdated: format(new Date(), 'PPP')
+        lastUpdated: format(new Date(), 'M/d/yyyy')
       };
 
       console.log('Submitting unit data:', { unitData, projectId, isEdit: !!unit });
