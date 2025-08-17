@@ -15,6 +15,7 @@ import { Unit } from '@/lib/projectData';
 import { CalendarIcon, Save, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import PhotoUpload from './PhotoUpload';
 
 interface UnitFormProps {
   unit?: Unit;
@@ -452,13 +453,12 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
               </div>
 
               <div>
-                <Label htmlFor="photos">Photos (JSON Array)</Label>
-                <Textarea
-                  id="photos"
-                  value={formData.photos}
-                  onChange={(e) => setFormData({ ...formData, photos: e.target.value })}
-                  placeholder='["photo1.jpg", "photo2.jpg"]'
-                  rows={3}
+                <Label>Photos</Label>
+                <PhotoUpload
+                  photos={JSON.parse(formData.photos)}
+                  onPhotosUpdate={(photos) => setFormData({ ...formData, photos: JSON.stringify(photos) })}
+                  projectId={projectId}
+                  unitId={unit?.id}
                 />
               </div>
             </CardContent>

@@ -8,6 +8,10 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getProject, type Project } from "@/lib/projectData";
 import UnitCard from "@/components/UnitCard";
+import PhotoGallery from "@/components/PhotoGallery";
+import Footer from "@/components/Footer";
+import { exportProjectToCSV, exportProjectToPDF, exportUnitsToCSV, exportUnitsToPDF } from "@/lib/exportUtils";
+import { useToast } from "@/hooks/use-toast";
 import { 
   ArrowLeft, 
   Building2, 
@@ -24,7 +28,9 @@ import {
   Edit3,
   Save,
   Home,
-  Loader2
+  Loader2,
+  Download,
+  FileSpreadsheet
 } from "lucide-react";
 
 export default function ProjectDetail() {
@@ -32,11 +38,13 @@ export default function ProjectDetail() {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
   const [editableNotes, setEditableNotes] = useState({
     weekly: "",
     monthly: "",
     targetMilestone: ""
   });
+  const { toast } = useToast();
 
   useEffect(() => {
     loadProject();
@@ -111,15 +119,103 @@ export default function ProjectDetail() {
     setIsEditing(false);
   };
 
+  const handleExportCSV = async () => {
+    if (!project) return;
+    setExportLoading(true);
+    try {
+      exportProjectToCSV(project);
+      toast({
+        title: "Export Successful",
+        description: "Project data exported as CSV"
+      });
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "Failed to export project data",
+        variant: "destructive"
+      });
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    if (!project) return;
+    setExportLoading(true);
+    try {
+      exportProjectToPDF(project);
+      toast({
+        title: "Export Successful",
+        description: "Project report exported as PDF"
+      });
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "Failed to export project report",
+        variant: "destructive"
+      });
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const handleExportUnitsCSV = async () => {
+    if (!project) return;
+    setExportLoading(true);
+    try {
+      exportUnitsToCSV(project.units, project.name);
+      toast({
+        title: "Export Successful",
+        description: "Units data exported as CSV"
+      });
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "Failed to export units data",
+        variant: "destructive"
+      });
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const handleExportUnitsPDF = async () => {
+    if (!project) return;
+    setExportLoading(true);
+    try {
+      exportUnitsToPDF(project.units, project.name);
+      toast({
+        title: "Export Successful",
+        description: "Units report exported as PDF"
+      });
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "Failed to export units report",
+        variant: "destructive"
+      });
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Header */}
-      <div className="bg-gradient-secondary">
-        <div className="container mx-auto px-6 py-8">
-          <div className="flex items-center justify-between">
+      <div className="relative bg-[#1a1a1a] text-white">
+        {/* Background Image Overlay */}
+        <div 
+          className="absolute inset-0 opacity-30 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('/src/assets/bilaad-header.jpg')`
+          }}
+        />
+        
+        <div className="relative z-10 container mx-auto px-6 py-8">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <Link to="/dashboard">
-                <Button variant="outline" className="bg-primary/10 border-primary/20 text-white hover:bg-primary/20">
+                <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Dashboard
                 </Button>
@@ -132,18 +228,34 @@ export default function ProjectDetail() {
                 <p className="text-white/90 text-lg">Project Management Details</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
               <Badge className={`${statusColors[project.status]} border-0 text-base px-4 py-2`}>
                 {statusLabels[project.status]}
               </Badge>
-              <Button 
-                variant={isEditing ? "default" : "outline"}
-                className={isEditing ? "bg-primary text-primary-foreground" : "bg-primary/10 border-primary/20 text-white hover:bg-primary/20"}
-                onClick={isEditing ? handleSave : () => setIsEditing(true)}
-              >
-                {isEditing ? <Save className="h-4 w-4 mr-2" /> : <Edit3 className="h-4 w-4 mr-2" />}
-                {isEditing ? "Save Changes" : "Edit Report"}
-              </Button>
+              
+              {/* Export Buttons */}
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  onClick={handleExportCSV}
+                  disabled={exportLoading}
+                >
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  CSV
+                </Button>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  onClick={handleExportPDF}
+                  disabled={exportLoading}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  PDF
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -295,13 +407,39 @@ export default function ProjectDetail() {
           <TabsContent value="units" className="space-y-6">
             <Card className="border-0 shadow-card">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Home className="h-5 w-5 text-primary" />
-                  Individual Unit Reports
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Detailed progress tracking for each residential unit
-                </p>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Home className="h-5 w-5 text-primary" />
+                      Individual Unit Reports
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Detailed progress tracking for each residential unit
+                    </p>
+                  </div>
+                  
+                  {/* Units Export Buttons */}
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      onClick={handleExportUnitsCSV}
+                      disabled={exportLoading}
+                    >
+                      <FileSpreadsheet className="h-4 w-4 mr-2" />
+                      Export CSV
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      size="sm"
+                      onClick={handleExportUnitsPDF}
+                      disabled={exportLoading}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Export PDF
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -389,14 +527,10 @@ export default function ProjectDetail() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <Camera className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground mb-4">No progress photos uploaded yet.</p>
-                  <Button variant="outline">
-                    <Camera className="h-4 w-4 mr-2" />
-                    Upload Photos
-                  </Button>
-                </div>
+                <PhotoGallery 
+                  photos={project.progressImages || []} 
+                  title="Project Progress Photos"
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -442,6 +576,8 @@ export default function ProjectDetail() {
           </TabsContent>
         </Tabs>
       </div>
+      
+      <Footer />
     </div>
   );
 }

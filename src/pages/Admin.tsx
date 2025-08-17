@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { fetchProjects, deleteUnit } from '@/lib/supabaseService';
@@ -11,7 +12,7 @@ import AdminProjectCard from '@/components/AdminProjectCard';
 import ProjectForm from '@/components/ProjectForm';
 import AdminUnitCard from '@/components/AdminUnitCard';
 import UnitForm from '@/components/UnitForm';
-import { Plus, LogOut, Users, Building2, RefreshCw } from 'lucide-react';
+import { Plus, LogOut, Users, Building2, RefreshCw, Filter } from 'lucide-react';
 
 export default function Admin() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -23,6 +24,7 @@ export default function Admin() {
   const [showUnitForm, setShowUnitForm] = useState(false);
   const [editingUnit, setEditingUnit] = useState<Unit | undefined>();
   const [deletingUnit, setDeletingUnit] = useState<Unit | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const { signOut, user } = useAuth();
   const { toast } = useToast();
 
@@ -115,6 +117,11 @@ export default function Admin() {
     setShowUnitForm(true);
   };
 
+  const filteredProjects = projects.filter(project => {
+    if (statusFilter === 'all') return true;
+    return project.status === statusFilter;
+  });
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -179,33 +186,56 @@ export default function Admin() {
           </Card>
         </div>
 
-        {/* Actions */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Projects</h2>
-          <Button onClick={() => setShowProjectForm(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Project
-          </Button>
+        {/* Projects Section */}
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h2 className="text-xl font-semibold">Project Portfolio</h2>
+            <div className="flex items-center gap-4">
+              {/* Status Filter */}
+              <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-auto">
+                <TabsList className="grid grid-cols-5 w-fit">
+                  <TabsTrigger value="all" className="text-xs px-3">All</TabsTrigger>
+                  <TabsTrigger value="planning" className="text-xs px-3">Planning</TabsTrigger>
+                  <TabsTrigger value="in-progress" className="text-xs px-3">In Progress</TabsTrigger>
+                  <TabsTrigger value="near-completion" className="text-xs px-3">Near Completion</TabsTrigger>
+                  <TabsTrigger value="completed" className="text-xs px-3">Completed</TabsTrigger>
+                </TabsList>
+              </Tabs>
+              
+              <Button onClick={() => setShowProjectForm(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Project
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Projects Grid */}
         {loading ? (
           <div className="text-center py-8">Loading projects...</div>
-        ) : projects.length === 0 ? (
+        ) : filteredProjects.length === 0 ? (
           <Card>
             <CardContent className="text-center py-8">
               <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">No Projects Found</h3>
-              <p className="text-muted-foreground mb-4">Get started by creating your first project.</p>
-              <Button onClick={() => setShowProjectForm(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Project
-              </Button>
+              <h3 className="text-lg font-medium mb-2">
+                {statusFilter === 'all' ? 'No Projects Found' : `No ${statusFilter.replace('-', ' ')} Projects`}
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                {statusFilter === 'all' 
+                  ? 'Get started by creating your first project.' 
+                  : `No projects with ${statusFilter.replace('-', ' ')} status found.`}
+              </p>
+              {statusFilter === 'all' && (
+                <Button onClick={() => setShowProjectForm(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Project
+                </Button>
+              )}
             </CardContent>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project) => (
+            {filteredProjects.map((project) => (
               <AdminProjectCard
                 key={project.id}
                 project={project}

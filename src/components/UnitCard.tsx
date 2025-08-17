@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Unit } from "@/lib/projectData";
+import PhotoGallery from "./PhotoGallery";
 import { 
   Building2, 
   Calendar, 
@@ -16,7 +17,8 @@ import {
   TreePine,
   Building,
   MapPin,
-  Crown
+  Crown,
+  Camera
 } from "lucide-react";
 
 interface UnitCardProps {
@@ -149,6 +151,17 @@ export default function UnitCard({ unit }: UnitCardProps) {
                 <li key={index} className="text-muted-foreground">• {challenge}</li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {/* Photos Section */}
+        {unit.photos && unit.photos.length > 0 && (
+          <div>
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <Camera className="h-4 w-4" />
+              Unit Photos ({unit.photos.length})
+            </h4>
+            <PhotoGallery photos={unit.photos} title="" />
           </div>
         )}
 
