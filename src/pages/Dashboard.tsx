@@ -165,8 +165,8 @@ export default function Dashboard() {
                 Project Portfolio
               </CardTitle>
               <div className="flex gap-4 items-center">
-                
-                                
+
+
                 <div className="relative">
                   <Search className="h-4 w-4 absolute left-3 top-3 text-muted-foreground" />
                   <Input
@@ -204,6 +204,13 @@ export default function Dashboard() {
                     onClick={() => setStatusFilter("near-completion")}
                   >
                     Near Completion
+                  </Button>
+                  <Button
+                    variant={statusFilter === "completed" ? "success" : "outline"}
+                    size="sm"
+                    onClick={() => setStatusFilter("completed")}
+                  >
+                    Completed
                   </Button>
                 </div>
               </div>
