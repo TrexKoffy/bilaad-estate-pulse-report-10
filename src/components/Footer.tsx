@@ -51,7 +51,7 @@ export default function Footer() {
               <div>
                 <p className="text-gray-300">
                   No 47 ML Wushishi Crescent Utako Abuja,<br />
-                  Adjacent CBN Quarters
+                  Adjacent CBN Quarters, Nigeria
                 </p>
               </div>
             </div>
@@ -117,7 +117,7 @@ export default function Footer() {
               © 2025 Bilaad Realty Nigeria Ltd. All rights reserved.
             </p>
             <p className="text-gray-400 text-sm text-center md:text-right">
-              Estate Pulse Report • Project Management System
+              Bilaad Projects Report • Project Management System
             </p>
           </div>
         </div>
