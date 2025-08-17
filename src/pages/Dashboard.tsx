@@ -82,7 +82,7 @@ export default function Dashboard() {
         <div className="relative z-10 container mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white">BILAAD</h1>
+              <h1 className="text-3xl font-bold text-white">BILAAD PROJECTS</h1>
               <p className="text-white/90 text-lg">Project Management Dashboard</p>
             </div>
             <div className="flex gap-3">
@@ -165,9 +165,8 @@ export default function Dashboard() {
                 Project Portfolio
               </CardTitle>
               <div className="flex gap-4 items-center">
-                <Button variant="outline" asChild>
-                  <a href="/admin">Admin Panel</a>
-                </Button>
+                
+                                
                 <div className="relative">
                   <Search className="h-4 w-4 absolute left-3 top-3 text-muted-foreground" />
                   <Input
