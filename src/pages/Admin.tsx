@@ -13,7 +13,6 @@ import ProjectForm from '@/components/ProjectForm';
 import AdminUnitCard from '@/components/AdminUnitCard';
 import UnitForm from '@/components/UnitForm';
 import { Plus, LogOut, Users, Building2, RefreshCw, Filter } from 'lucide-react';
-import BilaadLogo from '@/assets/bilaad-logo.png';
 
 export default function Admin() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -124,41 +123,28 @@ export default function Admin() {
   });
 
   return (
-  <div className="min-h-screen bg-background">
-  {/* Header */}
-  <div className="border-b bg-card">
-    <div className="container mx-auto px-4 py-4">
-      <div className="flex items-center justify-between">
-        {/* Left side */}
-        <div className="flex items-center gap-4">
-          {/* Logo */}
-          <img
-            src={bilaadLogo}
-            alt="Bilaad Logo"
-            className="w-32 object-contain"
-          />
-          <div>
-            <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back, {user?.email}</p>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="border-b bg-card">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+              <p className="text-muted-foreground">Welcome back, {user?.email}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={loadProjects} disabled={loading}>
+                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+              <Button variant="outline" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
-
-        {/* Right side buttons */}
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={loadProjects} disabled={loading}>
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
-          <Button variant="outline" onClick={handleSignOut}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </Button>
-        </div>
       </div>
-    </div>
-  </div>
-</div>
-
 
       <div className="container mx-auto px-4 py-6">
         {/* Stats */}
