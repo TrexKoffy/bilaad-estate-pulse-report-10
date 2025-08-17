@@ -76,7 +76,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-subtle">
 
       {/* Logo strip */}
-<div className="bg-white w-full py-6 flex justify-center">
+<div className="bg-[#1a1a1a] w-full py-6 flex justify-center">
   <img
     src={BilaadLogo}
     alt="Bilaad Logo"
