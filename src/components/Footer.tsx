@@ -1,5 +1,6 @@
 import { Card } from '@/components/ui/card';
-import { MapPin, Mail, Phone, Facebook, Linkedin, Instagram, Twitter } from 'lucide-react';
+import { MapPin, Mail, Phone, Facebook, Linkedin, Instagram, X as TwitterX } from 'lucide-react';
+
 
 export default function Footer() {
   const socialLinks = [
@@ -21,7 +22,7 @@ export default function Footer() {
     {
       name: 'X (Twitter)',
       url: 'https://x.com/BilaadRealty?t=AtexiTuf2OF_yZq1U6Ctcw&s=08',
-      icon: Twitter
+      icon: TwitterX
     }
   ];
 
@@ -51,7 +52,7 @@ export default function Footer() {
               <div>
                 <p className="text-gray-300">
                   No 47 ML Wushishi Crescent Utako Abuja,<br />
-                  Adjacent CBN Quarters, Nigeria
+                  Adjacent CBN Quarters, Nigeria.
                 </p>
               </div>
             </div>
@@ -114,7 +115,7 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-gray-700">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm text-center md:text-left">
-              © 2025 Bilaad Realty Nigeria Ltd. All rights reserved.
+               © {new Date().getFullYear()} Bilaad Realty Nigeria Ltd. All rights reserved.
             </p>
             <p className="text-gray-400 text-sm text-center md:text-right">
               Bilaad Projects Report • Project Management System
