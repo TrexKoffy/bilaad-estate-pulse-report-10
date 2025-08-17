@@ -8,6 +8,7 @@ import { getProjects, type Project } from "@/lib/projectData";
 import { migrateStaticData, checkMigrationStatus } from "@/lib/dataMigration";
 import { FileText, Calendar, Download, Filter, Search, Database, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import Footer from "@/components/Footer";
 import bilaadHeader from "@/assets/bilaad-header.jpg";
 
 export default function Dashboard() {
@@ -260,6 +261,8 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <Footer />
     </div>
   );
 }
