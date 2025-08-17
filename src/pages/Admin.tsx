@@ -13,6 +13,7 @@ import ProjectForm from '@/components/ProjectForm';
 import AdminUnitCard from '@/components/AdminUnitCard';
 import UnitForm from '@/components/UnitForm';
 import { Plus, LogOut, Users, Building2, RefreshCw, Filter } from 'lucide-react';
+import BilaadLogo from '@/assets/bilaad-logo.png';
 
 export default function Admin() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -128,6 +129,14 @@ export default function Admin() {
       <div className="border-b bg-card">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
+             {/* Left side */}
+        <div className="flex items-center gap-4">
+          {/* Logo */}
+          <img
+            src={BilaadLogo}
+            alt="Bilaad Logo"
+            className="w-32 object-contain"
+          />
             <div>
               <h1 className="text-2xl font-bold">Admin Dashboard</h1>
               <p className="text-muted-foreground">Welcome back, {user?.email}</p>
