@@ -10,6 +10,7 @@ import { FileText, Calendar, Download, Filter, Search, Database, Loader2 } from 
 import { Input } from "@/components/ui/input";
 import Footer from "@/components/Footer";
 import bilaadHeader from "@/assets/bilaad-header.jpg";
+import BilaadLogo from '@/assets/bilaad-logo.png';
 
 export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -73,6 +74,15 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+
+      {/* Logo strip */}
+<div className="bg-white w-full py-6 flex justify-center">
+  <img
+    src={BilaadLogo}
+    alt="Bilaad Logo"
+    className="w-40 md:w-52 object-contain"
+  />
+</div>
       {/* Header */}
       <div className="relative h-32 bg-gradient-primary overflow-hidden">
         <img 
