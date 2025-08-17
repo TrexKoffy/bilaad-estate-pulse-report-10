@@ -1,3 +1,4 @@
+import BilaadLogo from '@/assets/bilaad-logo.png';
 import { Card } from '@/components/ui/card';
 import { MapPin, Mail, Phone, Facebook, Linkedin, Instagram, X as TwitterX } from 'lucide-react';
 
@@ -41,6 +42,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
+            {/* BilaadLogo */}
+            <img src={BilaadLogo} alt="Bilaad Logo" className="w-28 object-contain" />
             <h3 className="text-xl font-bold text-white">Bilaad Realty Nigeria Ltd</h3>
             <p className="text-gray-300 leading-relaxed">
               Premier real estate development company delivering exceptional residential and commercial projects across Nigeria.
