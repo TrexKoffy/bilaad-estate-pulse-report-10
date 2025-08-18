@@ -31,7 +31,7 @@ export default function Footer() {
     <footer className="relative bg-[#1a1a1a] text-white mt-16">
       {/* Background Image Overlay */}
       <div 
-        className="absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 opacity-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `url('/src/assets/bilaad-header.jpg')`
         }}
