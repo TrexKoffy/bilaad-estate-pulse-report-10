@@ -88,7 +88,7 @@ export default function Dashboard() {
         <img 
           src={bilaadHeader} 
           alt="BILAAD Real Estate" 
-          className="absolute inset-0 w-full h-full object-cover opacity-20"
+          className="absolute inset-0 w-full h-full object-cover opacity-10"
         />
         <div className="relative z-10 container mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
