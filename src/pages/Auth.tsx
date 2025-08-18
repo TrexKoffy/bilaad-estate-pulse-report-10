@@ -75,7 +75,7 @@ export default function Auth() {
                   <img
             src={BilaadLogo2}
             alt="Bilaad Logo"
-            className="h-36 w-36 object-contain"
+            className="w-36 max-h-20 object-contain"
           />
           </div>
           <CardTitle className="text-2xl">Admin Access</CardTitle>
