@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Shield, Mail, Lock } from 'lucide-react';
+import BilaadLogo from "@/assets/bilaad-logo.png";
+
 
 export default function Auth() {
   const [email, setEmail] = useState('');
@@ -70,7 +72,11 @@ export default function Auth() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <Shield className="h-12 w-12 text-primary" />
+                  <img
+            src={BilaadLogo}
+            alt="Bilaad Logo"
+            className="h-12 w-12 object-contain"
+          />
           </div>
           <CardTitle className="text-2xl">Admin Access</CardTitle>
         </CardHeader>
