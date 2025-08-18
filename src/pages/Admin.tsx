@@ -13,6 +13,7 @@ import ProjectForm from '@/components/ProjectForm';
 import AdminUnitCard from '@/components/AdminUnitCard';
 import UnitForm from '@/components/UnitForm';
 import { Plus, LogOut, Users, Building2, RefreshCw, Filter } from 'lucide-react';
+import BilaadLogo from '@/assets/bilaad-logo.png';
 
 export default function Admin() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -109,7 +110,7 @@ export default function Admin() {
 
   const handleUnitFormSave = () => {
     loadProjects();
-    handleUnitFormClose();
+    // Don't automatically close the form to allow multiple photo uploads
   };
 
   const handleCreateUnit = () => {
@@ -124,6 +125,15 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Logo strip */}
+      <div className="bg-[#1a1a1a] w-full py-6 flex justify-center">
+        <img
+          src={BilaadLogo}
+          alt="Bilaad Logo"
+          className="w-40 md:w-52 object-contain"
+        />
+      </div>
+      
       {/* Header */}
       <div className="border-b bg-card">
         <div className="container mx-auto px-4 py-4">

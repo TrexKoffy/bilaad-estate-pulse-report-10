@@ -8,7 +8,11 @@ import { getProjects, type Project } from "@/lib/projectData";
 import { migrateStaticData, checkMigrationStatus } from "@/lib/dataMigration";
 import { FileText, Calendar, Download, Filter, Search, Database, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { exportProjectToCSV, exportProjectToPDF } from "@/lib/exportUtils";
 import Footer from "@/components/Footer";
+import MeetingScheduleModal from "@/components/MeetingScheduleModal";
+import CustomReportModal from "@/components/CustomReportModal";
 import bilaadHeader from "@/assets/real-estate-header-bg.jpg";
 import BilaadLogo from '@/assets/bilaad-logo.png';
 
@@ -19,6 +23,10 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [migrating, setMigrating] = useState(false);
   const [migrationStatus, setMigrationStatus] = useState({ migrated: false, projectCount: 0, unitCount: 0 });
+  const [showMeetingModal, setShowMeetingModal] = useState(false);
+  const [showCustomReportModal, setShowCustomReportModal] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+  const { toast } = useToast();
 
   // Load projects from database
   useEffect(() => {
@@ -67,9 +75,84 @@ export default function Dashboard() {
     return matchesSearch && matchesStatus;
   });
 
-  const generateReport = (type: 'weekly' | 'monthly') => {
-    // In a real app, this would generate and download a report
-    console.log(`Generating ${type} report...`);
+  const generateReport = async (type: 'weekly' | 'monthly') => {
+    setExportLoading(true);
+    try {
+      const currentDate = new Date();
+      const days = type === 'weekly' ? 7 : 30;
+      const cutoffDate = new Date(currentDate.getTime() - (days * 24 * 60 * 60 * 1000));
+      
+      const recentProjects = projects.filter(project => {
+        if (project.units && project.units.length > 0) {
+          return project.units.some(unit => {
+            const lastUpdated = new Date(unit.lastUpdated);
+            return lastUpdated >= cutoffDate;
+          });
+        }
+        return false;
+      });
+
+      if (recentProjects.length === 0) {
+        toast({
+          title: 'No Recent Updates',
+          description: `No projects have been updated in the last ${days} days.`,
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      // Export all recent projects
+      recentProjects.forEach(project => {
+        exportProjectToPDF(project);
+      });
+
+      toast({
+        title: 'Reports Generated',
+        description: `${type.charAt(0).toUpperCase() + type.slice(1)} report for ${recentProjects.length} project(s) has been downloaded.`
+      });
+    } catch (error) {
+      console.error('Error generating report:', error);
+      toast({
+        title: 'Export Failed',
+        description: 'Failed to generate report. Please try again.',
+        variant: 'destructive'
+      });
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const exportAllReports = async () => {
+    setExportLoading(true);
+    try {
+      if (projects.length === 0) {
+        toast({
+          title: 'No Data',
+          description: 'No projects available to export.',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      // Export all projects as PDF
+      projects.forEach(project => {
+        exportProjectToPDF(project);
+      });
+
+      toast({
+        title: 'All Reports Exported',
+        description: `${projects.length} project report(s) have been downloaded.`
+      });
+    } catch (error) {
+      console.error('Error exporting all reports:', error);
+      toast({
+        title: 'Export Failed',
+        description: 'Failed to export reports. Please try again.',
+        variant: 'destructive'
+      });
+    } finally {
+      setExportLoading(false);
+    }
   };
 
   return (
@@ -101,16 +184,26 @@ export default function Dashboard() {
                 variant="outline" 
                 className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                 onClick={() => generateReport('weekly')}
+                disabled={exportLoading}
               >
-                <FileText className="h-4 w-4 mr-2" />
+                {exportLoading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <FileText className="h-4 w-4 mr-2" />
+                )}
                 Weekly Report
               </Button>
               <Button 
                 variant="outline" 
                 className="bg-white/10 border-white/20 text-white hover:bg-white/20"
                 onClick={() => generateReport('monthly')}
+                disabled={exportLoading}
               >
-                <Calendar className="h-4 w-4 mr-2" />
+                {exportLoading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Calendar className="h-4 w-4 mr-2" />
+                )}
                 Monthly Report
               </Button>
             </div>
@@ -255,15 +348,32 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-4">
-              <Button variant="premium" size="lg">
-                <Download className="h-4 w-4 mr-2" />
+              <Button 
+                variant="premium" 
+                size="lg"
+                onClick={exportAllReports}
+                disabled={exportLoading}
+              >
+                {exportLoading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4 mr-2" />
+                )}
                 Export All Reports
               </Button>
-              <Button variant="outline" size="lg">
+              <Button 
+                variant="outline" 
+                size="lg"
+                onClick={() => setShowMeetingModal(true)}
+              >
                 <Calendar className="h-4 w-4 mr-2" />
                 Schedule Review Meeting
               </Button>
-              <Button variant="outline" size="lg">
+              <Button 
+                variant="outline" 
+                size="lg"
+                onClick={() => setShowCustomReportModal(true)}
+              >
                 <FileText className="h-4 w-4 mr-2" />
                 Create Custom Report
               </Button>
@@ -273,6 +383,20 @@ export default function Dashboard() {
       </div>
 
       <Footer />
+
+      {/* Meeting Schedule Modal */}
+      <MeetingScheduleModal
+        open={showMeetingModal}
+        onOpenChange={setShowMeetingModal}
+        projects={projects}
+      />
+
+      {/* Custom Report Modal */}
+      <CustomReportModal
+        open={showCustomReportModal}
+        onOpenChange={setShowCustomReportModal}
+        projects={projects}
+      />
     </div>
   );
 }

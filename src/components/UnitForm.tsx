@@ -263,7 +263,10 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
       });
 
       onSave();
-      onOpenChange(false);
+      // Keep the form open for multiple photo uploads unless it's a new unit creation
+      if (!unit) {
+        onOpenChange(false);
+      }
     } catch (error: any) {
       console.error('Unexpected error saving unit:', {
         error,
