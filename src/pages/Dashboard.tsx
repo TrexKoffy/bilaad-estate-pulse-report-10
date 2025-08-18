@@ -9,7 +9,7 @@ import { migrateStaticData, checkMigrationStatus } from "@/lib/dataMigration";
 import { FileText, Calendar, Download, Filter, Search, Database, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Footer from "@/components/Footer";
-import bilaadHeader from "@/assets/bilaad-header.jpg";
+import bilaadHeader from "@/assets/real-estate-header-bg.jpg";
 import BilaadLogo from '@/assets/bilaad-logo.png';
 
 export default function Dashboard() {

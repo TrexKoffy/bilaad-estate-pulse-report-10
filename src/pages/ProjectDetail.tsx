@@ -207,7 +207,7 @@ export default function ProjectDetail() {
         <div 
           className="absolute inset-0 opacity-30 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('/src/assets/bilaad-header.jpg')`
+            backgroundImage: `url('/src/assets/real-estate-header-bg.jpg')`
           }}
         />
         
