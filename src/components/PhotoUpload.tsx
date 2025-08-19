@@ -48,23 +48,27 @@ export default function PhotoUpload({
     const filePath = `${projectId}/${unitId || 'project'}/${fileName}`;
 
     try {
+      console.log('PhotoUpload: Uploading file to path:', filePath);
       const { data, error } = await supabase.storage
         .from('UNITS')
         .upload(filePath, file);
 
       if (error) {
-        console.error('Upload error:', error);
+        console.error('PhotoUpload: Upload error:', error);
         return null;
       }
+      
+      console.log('PhotoUpload: Upload successful:', data);
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('UNITS')
         .getPublicUrl(filePath);
 
+      console.log('PhotoUpload: Public URL generated:', publicUrl);
       return publicUrl;
     } catch (error) {
-      console.error('Unexpected upload error:', error);
+      console.error('PhotoUpload: Unexpected upload error:', error);
       return null;
     }
   };
@@ -106,7 +110,9 @@ export default function PhotoUpload({
     setUploadProgress(0);
 
     try {
+      console.log('PhotoUpload: Starting upload process for', files.length, 'files');
       const uploadPromises = files.map(async (file, index) => {
+        console.log(`PhotoUpload: Uploading file ${index + 1}/${files.length}:`, file.name);
         const url = await uploadFile(file);
         setUploadProgress(((index + 1) / files.length) * 100);
         return url;
@@ -114,9 +120,16 @@ export default function PhotoUpload({
 
       const uploadedUrls = await Promise.all(uploadPromises);
       const successfulUploads = uploadedUrls.filter(url => url !== null) as string[];
+      
+      console.log('PhotoUpload: Upload results:', { 
+        total: files.length, 
+        successful: successfulUploads.length,
+        urls: successfulUploads 
+      });
 
       if (successfulUploads.length > 0) {
         const newPhotos = [...photos, ...successfulUploads];
+        console.log('PhotoUpload: Updating photos from', photos.length, 'to', newPhotos.length);
         onPhotosUpdate(newPhotos);
         
         toast({
@@ -126,9 +139,11 @@ export default function PhotoUpload({
       }
 
       if (successfulUploads.length < files.length) {
+        const failedCount = files.length - successfulUploads.length;
+        console.error('PhotoUpload: Some uploads failed:', failedCount);
         toast({
           title: 'Some uploads failed',
-          description: `${files.length - successfulUploads.length} photo(s) failed to upload`,
+          description: `${failedCount} photo(s) failed to upload. Check console for details.`,
           variant: 'destructive'
         });
       }

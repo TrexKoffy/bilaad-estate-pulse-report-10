@@ -83,7 +83,6 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
         toast({ title: 'Success', description: 'Project created successfully' });
       }
       onSave();
-      onClose();
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -311,13 +310,23 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
 
           <div className="space-y-2">
             <Label htmlFor="progressImages">Progress Photos</Label>
-            <PhotoUpload
-              photos={formData.progressImages}
-              onPhotosUpdate={(photos) => setFormData(prev => ({ ...prev, progressImages: photos }))}
-              projectId={project?.id || 'temp'}
-              maxFiles={20}
-              maxSize={1}
-            />
+            {project?.id ? (
+              <PhotoUpload
+                photos={formData.progressImages}
+                onPhotosUpdate={(photos) => {
+                  console.log('PhotoUpload: Updated photos:', photos);
+                  setFormData(prev => ({ ...prev, progressImages: photos }));
+                }}
+                projectId={project.id}
+                maxFiles={20}
+                maxSize={1}
+              />
+            ) : (
+              <div className="p-4 border-2 border-dashed border-muted-foreground/25 rounded-lg text-center">
+                <p className="text-muted-foreground mb-2">Save the project first to enable photo uploads</p>
+                <p className="text-sm text-muted-foreground">Photos can be added after the project is created</p>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end gap-2">

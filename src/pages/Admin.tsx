@@ -68,6 +68,7 @@ export default function Admin() {
 
   const handleProjectFormSave = () => {
     loadProjects();
+    handleProjectFormClose();
   };
 
   const handleEditUnit = (unit: Unit) => {
