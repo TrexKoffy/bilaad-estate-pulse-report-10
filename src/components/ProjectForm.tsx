@@ -10,6 +10,7 @@ import { Project } from '@/lib/projectData';
 import { createProject, updateProject } from '@/lib/supabaseService';
 import { useToast } from '@/hooks/use-toast';
 import { X, Save } from 'lucide-react';
+import PhotoUpload from './PhotoUpload';
 
 interface ProjectFormProps {
   project?: Project;
@@ -306,6 +307,17 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
                 onChange={(e) => setFormData(prev => ({ ...prev, monthlyNotes: e.target.value }))}
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="progressImages">Progress Photos</Label>
+            <PhotoUpload
+              photos={formData.progressImages}
+              onPhotosUpdate={(photos) => setFormData(prev => ({ ...prev, progressImages: photos }))}
+              projectId={project?.id || 'temp'}
+              maxFiles={20}
+              maxSize={1}
+            />
           </div>
 
           <div className="flex justify-end gap-2">
