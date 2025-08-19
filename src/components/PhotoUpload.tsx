@@ -247,7 +247,7 @@ export default function PhotoUpload({
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Camera className="h-12 w-12 text-muted-foreground mb-4" />
             <p className="text-muted-foreground mb-4">No photos uploaded yet</p>
-            <Button onClick={openFileDialog} variant="outline">
+            <Button type="button" onClick={openFileDialog} variant="outline">
               <Camera className="h-4 w-4 mr-2" />
               Upload First Photo
             </Button>
