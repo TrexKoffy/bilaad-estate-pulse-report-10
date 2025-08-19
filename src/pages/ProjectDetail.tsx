@@ -213,48 +213,50 @@ export default function ProjectDetail() {
         
         <div className="relative z-10 container mx-auto px-6 py-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <Link to="/dashboard">
-                <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dashboard
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                  <Building2 className="h-8 w-8" />
-                  {project.name} Estate
-                </h1>
-                <p className="text-white/90 text-lg">Project Management Details</p>
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <Link to="/dashboard">
+                  <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back to Dashboard
+                  </Button>
+                </Link>
+                <div>
+                  <h1 className="text-2xl lg:text-3xl font-bold text-white flex items-center gap-3">
+                    <Building2 className="h-6 lg:h-8 w-6 lg:w-8" />
+                    {project.name} Estate
+                  </h1>
+                  <p className="text-white/90 text-base lg:text-lg">Project Management Details</p>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <Badge className={`${statusColors[project.status]} border-0 text-base px-4 py-2`}>
-                {statusLabels[project.status]}
-              </Badge>
-              
-              {/* Export Buttons */}
-              <div className="flex items-center gap-2">
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-                  onClick={handleExportCSV}
-                  disabled={exportLoading}
-                >
-                  <FileSpreadsheet className="h-4 w-4 mr-2" />
-                  CSV
-                </Button>
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-                  onClick={handleExportPDF}
-                  disabled={exportLoading}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  PDF
-                </Button>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <Badge className={`${statusColors[project.status]} border-0 text-sm lg:text-base px-3 lg:px-4 py-1 lg:py-2`}>
+                  {statusLabels[project.status]}
+                </Badge>
+                
+                {/* Export Buttons */}
+                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="bg-white/10 border-white/20 text-white hover:bg-white/20 flex-1 sm:flex-initial"
+                    onClick={handleExportCSV}
+                    disabled={exportLoading}
+                  >
+                    <FileSpreadsheet className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
+                    <span className="text-xs lg:text-sm">CSV</span>
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="bg-white/10 border-white/20 text-white hover:bg-white/20 flex-1 sm:flex-initial"
+                    onClick={handleExportPDF}
+                    disabled={exportLoading}
+                  >
+                    <Download className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
+                    <span className="text-xs lg:text-sm">PDF</span>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

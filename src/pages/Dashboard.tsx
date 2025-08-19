@@ -174,40 +174,42 @@ export default function Dashboard() {
           className="absolute inset-0 w-full h-full object-cover opacity-10"
         />
         <div className="relative z-10 container mx-auto px-6 py-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-white">BILAAD PROJECTS</h1>
-              <p className="text-white/90 text-lg">Project Management Dashboard</p>
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-2xl lg:text-3xl font-bold text-white">BILAAD PROJECTS</h1>
+                <p className="text-white/90 text-base lg:text-lg">Project Management Dashboard</p>
+              </div>
+              <div className="flex flex-wrap gap-2 lg:gap-3 w-full lg:w-auto">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 flex-1 lg:flex-initial"
+                  onClick={() => generateReport('weekly')}
+                  disabled={exportLoading}
+                >
+                  {exportLoading ? (
+                    <Loader2 className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2 animate-spin" />
+                  ) : (
+                    <FileText className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
+                  )}
+                  <span className="text-xs lg:text-sm">Weekly Report</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 flex-1 lg:flex-initial"
+                  onClick={() => generateReport('monthly')}
+                  disabled={exportLoading}
+                >
+                  {exportLoading ? (
+                    <Loader2 className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2 animate-spin" />
+                  ) : (
+                    <Calendar className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
+                  )}
+                  <span className="text-xs lg:text-sm">Monthly Report</span>
+                </Button>
+              </div>
             </div>
-            <div className="flex gap-3">
-              <Button 
-                variant="outline" 
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-                onClick={() => generateReport('weekly')}
-                disabled={exportLoading}
-              >
-                {exportLoading ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <FileText className="h-4 w-4 mr-2" />
-                )}
-                Weekly Report
-              </Button>
-              <Button 
-                variant="outline" 
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-                onClick={() => generateReport('monthly')}
-                disabled={exportLoading}
-              >
-                {exportLoading ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <Calendar className="h-4 w-4 mr-2" />
-                )}
-                Monthly Report
-              </Button>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -263,28 +265,29 @@ export default function Dashboard() {
         {/* Filters and Search */}
         <Card className="border-0 shadow-card">
           <CardHeader>
-            <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
               <CardTitle className="flex items-center gap-2">
                 <Filter className="h-5 w-5 text-primary" />
                 Project Portfolio
               </CardTitle>
-              <div className="flex gap-4 items-center">
-
-
+              <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center w-full lg:w-auto">
                 <div className="relative">
                   <Search className="h-4 w-4 absolute left-3 top-3 text-muted-foreground" />
                   <Input
                     placeholder="Search projects..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 w-64"
+                    className="pl-10 w-full sm:w-64"
                   />
                 </div>
-                <div className="flex gap-2">
+                
+                {/* Mobile: Use flex wrap, Desktop: Keep inline */}
+                <div className="flex flex-wrap gap-2 sm:gap-2 lg:flex-nowrap">
                   <Button
                     variant={statusFilter === "all" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setStatusFilter("all")}
+                    className="flex-1 sm:flex-initial text-xs sm:text-sm"
                   >
                     All
                   </Button>
@@ -292,6 +295,7 @@ export default function Dashboard() {
                     variant={statusFilter === "planning" ? "warning" : "outline"}
                     size="sm"
                     onClick={() => setStatusFilter("planning")}
+                    className="flex-1 sm:flex-initial text-xs sm:text-sm"
                   >
                     Planning
                   </Button>
@@ -299,6 +303,7 @@ export default function Dashboard() {
                     variant={statusFilter === "in-progress" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setStatusFilter("in-progress")}
+                    className="flex-1 sm:flex-initial text-xs sm:text-sm"
                   >
                     In Progress
                   </Button>
@@ -306,6 +311,7 @@ export default function Dashboard() {
                     variant={statusFilter === "near-completion" ? "success" : "outline"}
                     size="sm"
                     onClick={() => setStatusFilter("near-completion")}
+                    className="flex-1 sm:flex-initial text-xs sm:text-sm"
                   >
                     Near Completion
                   </Button>
@@ -313,6 +319,7 @@ export default function Dashboard() {
                     variant={statusFilter === "completed" ? "success" : "outline"}
                     size="sm"
                     onClick={() => setStatusFilter("completed")}
+                    className="flex-1 sm:flex-initial text-xs sm:text-sm"
                   >
                     Completed
                   </Button>

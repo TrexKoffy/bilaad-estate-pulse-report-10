@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
@@ -261,6 +261,12 @@ export default function Admin() {
       {/* Project Form Dialog */}
       <Dialog open={showProjectForm} onOpenChange={setShowProjectForm}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+          <DialogHeader className="hidden">
+            <DialogTitle>{editingProject ? 'Edit Project' : 'Create New Project'}</DialogTitle>
+            <DialogDescription>
+              {editingProject ? 'Update project details and settings.' : 'Add a new project to your portfolio.'}
+            </DialogDescription>
+          </DialogHeader>
           <ProjectForm
             project={editingProject}
             onClose={handleProjectFormClose}
@@ -272,20 +278,21 @@ export default function Admin() {
       {/* Units Dialog */}
       <Dialog open={!!showUnits} onOpenChange={() => setShowUnits(null)}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Units for {showUnits?.name}</DialogTitle>
+            <DialogDescription>
+              Manage and view all units within this project.
+            </DialogDescription>
+          </DialogHeader>
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">
-                Units for {showUnits?.name}
-              </h3>
-              <div className="flex gap-2">
-                <Button onClick={handleCreateUnit}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Unit
-                </Button>
-                <Button variant="outline" onClick={() => setShowUnits(null)}>
-                  Close
-                </Button>
-              </div>
+            <div className="flex gap-2">
+              <Button onClick={handleCreateUnit}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Unit
+              </Button>
+              <Button variant="outline" onClick={() => setShowUnits(null)}>
+                Close
+              </Button>
             </div>
             
             {showUnits?.units && showUnits.units.length > 0 ? (
