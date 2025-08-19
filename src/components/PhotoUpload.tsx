@@ -186,6 +186,7 @@ export default function PhotoUpload({
       {/* Upload Button */}
       <div className="flex items-center gap-4">
         <Button
+          type="button"
           onClick={openFileDialog}
           disabled={uploading || photos.length >= maxFiles}
           variant="outline"
