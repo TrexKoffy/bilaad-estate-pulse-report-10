@@ -16,7 +16,7 @@ import {
   ArrowLeft, 
   Building2, 
   Calendar, 
-  Coins, 
+  Wallet, 
   MapPin, 
   User, 
   TrendingUp, 
@@ -298,7 +298,7 @@ export default function ProjectDetail() {
                   <p className="text-sm font-medium text-muted-foreground">Budget</p>
                   <p className="text-3xl font-bold text-accent">{project.budget}</p>
                 </div>
-                <Coins className="h-8 w-8 text-accent" />
+                <Wallet className="h-8 w-8 text-accent" />
               </div>
             </CardContent>
           </Card>
@@ -364,7 +364,7 @@ export default function ProjectDetail() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-1">
-                      <Coins className="h-4 w-4" />
+                      <Wallet className="h-4 w-4" />
                       Project Budget
                     </div>
                     <p className="font-medium">{project.budget}</p>
