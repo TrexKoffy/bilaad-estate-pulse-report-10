@@ -446,7 +446,8 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
               </div>
 
               <div>
-                <Label htmlFor="challenges">Challenges (JSON Array)</Label>
+                <Label htmlFor="challenges">Challenges (JSON Array) 
+                <span className="text-xs text-muted-foreground ml-2">(Type in the middle of the double bracket: e.g ["Weather delays", "Material shortage"])</span></Label>
                 <Textarea
                   id="challenges"
                   value={formData.challenges}
