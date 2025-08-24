@@ -58,9 +58,15 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
         startDate: project.startDate,
         budget: project.budget,
         targetMilestone: project.targetMilestone,
-        activitiesInProgress: project.activitiesInProgress.join('\n'),
-        completedActivities: project.completedActivities.join('\n'),
-        challenges: project.challenges.join('\n'),
+        activitiesInProgress: Array.isArray(project.activitiesInProgress)
+        ? project.activitiesInProgress.join('\n')
+        : project.activitiesInProgress || '',
+        completedActivities: Array.isArray(project.completedActivities)
+        ? project.completedActivities.join('\n')
+        : project.completedActivities || '',
+       challenges: Array.isArray(project.challenges)
+        ? project.challenges.join('\n')
+        : project.challenges || '',        
         progressImages: project.progressImages,
         weeklyNotes: project.weeklyNotes,
         monthlyNotes: project.monthlyNotes,
