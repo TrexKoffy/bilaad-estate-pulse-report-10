@@ -463,15 +463,25 @@ export default function ProjectDetail() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {project.completedActivities.map((activity, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <CheckCircle className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
-                        <p className="text-sm">{activity}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
+                <div className="space-y-3">
+                  {Array.isArray(project.completedActivities)
+                    ? project.completedActivities.map((activity, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <CheckCircle className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+                          <p className="text-sm">{activity}</p>
+                        </div>
+                      ))
+                    : project.completedActivities
+                        ?.split('\n')
+                        .filter(item => item.trim())
+                        .map((activity, index) => (
+                          <div key={index} className="flex items-start gap-3">
+                            <CheckCircle className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+                            <p className="text-sm">{activity}</p>
+                          </div>
+                        )) || []}
+                </div>
+              </CardContent>
               </Card>
 
               <Card className="border-0 shadow-card">
