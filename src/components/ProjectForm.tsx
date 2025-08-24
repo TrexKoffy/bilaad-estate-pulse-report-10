@@ -32,9 +32,9 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
     startDate: '',
     budget: '',
     targetMilestone: '',
-    activitiesInProgress: [] as string[],
-    completedActivities: [] as string[],
-    challenges: [] as string[],
+    activitiesInProgress: '', // Change to string
+    completedActivities: '', // Change to string
+    challenges: '', // Change to string
     progressImages: [] as string[],
     weeklyNotes: '',
     monthlyNotes: '',
@@ -58,9 +58,9 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
         startDate: project.startDate,
         budget: project.budget,
         targetMilestone: project.targetMilestone,
-        activitiesInProgress: project.activitiesInProgress,
-        completedActivities: project.completedActivities,
-        challenges: project.challenges,
+        activitiesInProgress: project.activitiesInProgress.join('\n'),
+        completedActivities: project.completedActivities.join('\n'),
+        challenges: project.challenges.join('\n'),
         progressImages: project.progressImages,
         weeklyNotes: project.weeklyNotes,
         monthlyNotes: project.monthlyNotes,
@@ -73,6 +73,12 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
     setSaving(true);
 
     try {
+      const finalFormData = {
+      ...formData,
+      activitiesInProgress: formData.activitiesInProgress.split('\n').filter(item => item.trim()),
+      completedActivities: formData.completedActivities.split('\n').filter(item => item.trim()),
+      challenges: formData.challenges.split('\n').filter(item => item.trim()),
+    };      
       if (project) {
         const { error } = await updateProject(project.id, formData);
         if (error) throw error;
@@ -97,7 +103,7 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
   const handleArrayInput = (field: 'activitiesInProgress' | 'completedActivities' | 'challenges' | 'progressImages', value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value.split('\n').filter(item => item.trim())
+      [field]: value, // Store the raw string with \n
     }));
   };
 
@@ -257,7 +263,7 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
               <Textarea
                 id="activitiesInProgress"
                 rows={4}
-                value={formData.activitiesInProgress.join('\n')}
+                value={formData.activitiesInProgress} // Raw string
                 onChange={(e) => handleArrayInput('activitiesInProgress', e.target.value)}
                 placeholder="Enter each activity on a new line"
               />
@@ -268,7 +274,7 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
               <Textarea
                 id="completedActivities"
                 rows={4}
-                value={formData.completedActivities.join('\n')}
+                value={formData.completedActivities} // Raw string
                 onChange={(e) => handleArrayInput('completedActivities', e.target.value)}
                 placeholder="Enter each activity on a new line"
               />
@@ -280,7 +286,7 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
             <Textarea
               id="challenges"
               rows={3}
-              value={formData.challenges.join('\n')}
+              value={formData.challenges} // Raw string
               onChange={(e) => handleArrayInput('challenges', e.target.value)}
               placeholder="Enter each challenge on a new line"
             />
