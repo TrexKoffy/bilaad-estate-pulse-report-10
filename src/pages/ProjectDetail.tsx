@@ -492,15 +492,25 @@ export default function ProjectDetail() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {project.activitiesInProgress.map((activity, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <Clock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                        <p className="text-sm">{activity}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
+                <div className="space-y-3">
+                  {Array.isArray(project.activitiesInProgress)
+                    ? project.activitiesInProgress.map((activity, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <Clock className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" /> {/* Example icon */}
+                          <p className="text-sm">{activity}</p>
+                        </div>
+                      ))
+                    : project.activitiesInProgress
+                        ?.split('\n')
+                        .filter(item => item.trim())
+                        .map((activity, index) => (
+                          <div key={index} className="flex items-start gap-3">
+                            <Clock className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                            <p className="text-sm">{activity}</p>
+                          </div>
+                        )) || []}
+                </div>
+              </CardContent>
               </Card>
             </div>
           </TabsContent>
@@ -514,19 +524,32 @@ export default function ProjectDetail() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {project.challenges.length > 0 ? (
-                    project.challenges.map((challenge, index) => (
+              <div className="space-y-4">
+                {Array.isArray(project.challenges) && project.challenges.length > 0
+                  ? project.challenges.map((challenge, index) => (
                       <div key={index} className="flex items-start gap-3 p-4 bg-warning/5 border border-warning/20 rounded-lg">
                         <AlertTriangle className="h-4 w-4 text-warning mt-0.5 flex-shrink-0" />
                         <p className="text-sm">{challenge}</p>
                       </div>
                     ))
-                  ) : (
-                    <p className="text-muted-foreground">No current challenges reported.</p>
-                  )}
-                </div>
-              </CardContent>
+                  : project.challenges
+                      ?.split('\n')
+                      .filter(item => item.trim())
+                      .length > 0
+                    ? project.challenges
+                        .split('\n')
+                        .filter(item => item.trim())
+                        .map((challenge, index) => (
+                          <div key={index} className="flex items-start gap-3 p-4 bg-warning/5 border border-warning/20 rounded-lg">
+                            <AlertTriangle className="h-4 w-4 text-warning mt-0.5 flex-shrink-0" />
+                            <p className="text-sm">{challenge}</p>
+                          </div>
+                        ))
+                    : (
+                      <p className="text-muted-foreground">No current challenges reported.</p>
+                    )}
+              </div>
+            </CardContent>
             </Card>
           </TabsContent>
 
