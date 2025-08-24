@@ -434,7 +434,8 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="activities">Activities (JSON)</Label>
+                <Label htmlFor="activities">Activities (JSON)
+                <span className="text-xs text-muted-foreground ml-2">(Statuses: "in-progress", "behind-schedule", "completed")</span> </Label>
                 <Textarea
                   id="activities"
                   value={formData.activities}
