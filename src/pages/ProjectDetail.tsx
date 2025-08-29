@@ -283,7 +283,7 @@ export default function ProjectDetail() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Units</p>
+                  <p className="text-sm font-medium text-muted-foreground"> Completed Units</p>
                   <p className="text-3xl font-bold text-secondary">{project.completedUnits}/{project.totalUnits}</p>
                 </div>
                 <Building2 className="h-8 w-8 text-secondary" />
