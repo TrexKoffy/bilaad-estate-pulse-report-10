@@ -86,11 +86,11 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
       challenges: formData.challenges.split('\n').filter(item => item.trim()),
     };      
       if (project) {
-        const { error } = await updateProject(project.id, formData);
+        const { error } = await updateProject(project.id, finalFormData);
         if (error) throw error;
         toast({ title: 'Success', description: 'Project updated successfully' });
       } else {
-        const { error } = await createProject(formData);
+        const { error } = await createProject(finalFormData);
         if (error) throw error;
         toast({ title: 'Success', description: 'Project created successfully' });
       }
