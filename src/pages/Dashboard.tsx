@@ -160,11 +160,13 @@ export default function Dashboard() {
 
       {/* Logo strip */}
 <div className="bg-[#1a1a1a] w-full py-6 flex justify-center">
+  <a href="/">
   <img
     src={BilaadLogo}
     alt="Bilaad Logo"
     className="w-40 md:w-52 object-contain"
   />
+  </a>
 </div>
       {/* Header */}
       <div className="relative h-32 bg-gradient-primary overflow-hidden">

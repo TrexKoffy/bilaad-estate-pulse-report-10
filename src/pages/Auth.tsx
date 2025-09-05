@@ -72,11 +72,13 @@ export default function Auth() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
+            <a href="/">
                   <img
-            src={BilaadLogo2}
-            alt="Bilaad Logo"
-            className="w-36 max-h-20 object-contain"
-          />
+                  src={BilaadLogo2}
+                  alt="Bilaad Logo"
+                  className="w-36 max-h-20 object-contain"
+                />
+          </a>
           </div>
           <CardTitle className="text-2xl">Admin Access</CardTitle>
         </CardHeader>

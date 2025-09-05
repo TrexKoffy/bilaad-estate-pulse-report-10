@@ -43,7 +43,9 @@ export default function Footer() {
           {/* Company Info */}
           <div className="space-y-4">
             {/* BilaadLogo */}
+            <a href="/">
             <img src={BilaadLogo} alt="Bilaad Logo" className="w-28 md:w-40 object-contain"/>
+            </a>
             <h3 className="text-xl font-bold text-white">Bilaad Realty Nigeria Ltd</h3>
             <p className="text-gray-300 leading-relaxed">
               Premier real estate development company delivering exceptional residential and commercial projects across Nigeria.
