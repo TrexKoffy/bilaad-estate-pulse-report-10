@@ -194,9 +194,10 @@ export default function PhotoUpload({
         console.warn('PhotoUpload: Could not extract file path from URL:', photoUrl);
       }
       
-      // Remove from local array
+      // Remove from local array (only if storage deletion was successful or couldn't extract path)
       const newPhotos = photos.filter((_, i) => i !== index);
       console.log('PhotoUpload: Updating photos array from', photos.length, 'to', newPhotos.length);
+      console.log('PhotoUpload: Updated photos:', newPhotos);
       onPhotosUpdate(newPhotos);
       
       toast({

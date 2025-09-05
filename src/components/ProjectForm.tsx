@@ -326,12 +326,12 @@ export default function ProjectForm({ project, onClose, onSave }: ProjectFormPro
               <PhotoUpload
                 photos={formData.progressImages}
                 onPhotosUpdate={(photos) => {
-                  console.log('PhotoUpload: Updated photos:', photos);
+                  console.log('ProjectForm: PhotoUpload updated photos:', photos);
                   setFormData(prev => ({ ...prev, progressImages: photos }));
                 }}
                 projectId={project.id}
-                maxFiles={20}
-                maxSize={1}
+                maxFiles={10}
+                maxSize={2}
               />
             ) : (
               <div className="p-4 border-2 border-dashed border-muted-foreground/25 rounded-lg text-center">

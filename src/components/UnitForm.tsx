@@ -15,6 +15,7 @@ import { Unit } from '@/lib/projectData';
 import { CalendarIcon, Save, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import PhotoUpload from '@/components/PhotoUpload';
 
 
 interface UnitFormProps {
@@ -47,7 +48,7 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
       finishing: 'in-progress'
     }, null, 2),
     challenges: JSON.stringify([], null, 2),
-    photos: JSON.stringify([], null, 2)
+    photos: [] as string[]
   });
 
   // Helper function to parse various date formats
@@ -112,7 +113,7 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
           finishing: 'in-progress'
         }, null, 2),
         challenges: JSON.stringify(unit.challenges || [], null, 2),
-        photos: JSON.stringify(unit.photos || [], null, 2)
+        photos: Array.isArray(unit.photos) ? unit.photos : []
       });
       
       // Parse target completion date safely
@@ -138,7 +139,7 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
           finishing: 'in-progress'
         }, null, 2),
         challenges: JSON.stringify([], null, 2),
-        photos: JSON.stringify([], null, 2)
+        photos: []
       });
       setTargetDate(undefined);
     }
@@ -149,16 +150,15 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
     setLoading(true);
 
     try {
-      let activities, challenges, photos;
+      let activities, challenges;
       
       try {
         activities = JSON.parse(formData.activities);
         challenges = JSON.parse(formData.challenges);
-        photos = JSON.parse(formData.photos);
       } catch (parseError) {
         toast({
           title: 'Invalid JSON',
-          description: 'Please check your JSON format in activities, challenges, or photos fields.',
+          description: 'Please check your JSON format in activities or challenges fields.',
           variant: 'destructive'
         });
         setLoading(false);
@@ -207,7 +207,7 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
         currentPhase: formData.currentPhase,
         activities,
         challenges,
-        photos,
+        photos: formData.photos,
         lastUpdated: format(new Date(), 'M/d/yyyy')
       };
 
@@ -263,7 +263,7 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
       });
 
       onSave();
-      // Keep the form open for multiple photo uploads unless it's a new unit creation
+      // Keep the form open for editing units to allow photo management
       if (!unit) {
         onOpenChange(false);
       }
@@ -457,6 +457,32 @@ export default function UnitForm({ unit, projectId, open, onOpenChange, onSave }
                 />
               </div>
 
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Progress Photos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {unit?.id && projectId ? (
+                <PhotoUpload
+                  photos={formData.photos}
+                  onPhotosUpdate={(photos) => {
+                    console.log('UnitForm: PhotoUpload updated photos from', formData.photos.length, 'to', photos.length);
+                    setFormData(prev => ({ ...prev, photos }));
+                  }}
+                  unitId={unit.id}
+                  projectId={projectId}
+                  maxFiles={10}
+                  maxSize={2}
+                />
+              ) : (
+                <div className="p-4 border-2 border-dashed border-muted-foreground/25 rounded-lg text-center">
+                  <p className="text-muted-foreground mb-2">Save the unit first to enable photo uploads</p>
+                  <p className="text-sm text-muted-foreground">Photos can be added after the unit is created</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
