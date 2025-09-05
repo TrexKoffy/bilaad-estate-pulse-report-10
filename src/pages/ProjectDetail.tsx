@@ -471,7 +471,7 @@ export default function ProjectDetail() {
                           <p className="text-sm">{activity}</p>
                         </div>
                       ))
-                    : project.completedActivities
+                    : (project.completedActivities as string)
                         ?.split('\n')
                         .filter(item => item.trim())
                         .map((activity, index) => (
@@ -500,7 +500,7 @@ export default function ProjectDetail() {
                           <p className="text-sm">{activity}</p>
                         </div>
                       ))
-                    : project.activitiesInProgress
+                    : (project.activitiesInProgress as string)
                         ?.split('\n')
                         .filter(item => item.trim())
                         .map((activity, index) => (

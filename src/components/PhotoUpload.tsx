@@ -21,7 +21,7 @@ export default function PhotoUpload({
   unitId, 
   projectId, 
   maxFiles = 10,
-  maxSize = 5
+  maxSize = 2
 }: PhotoUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
