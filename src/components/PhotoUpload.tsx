@@ -163,9 +163,55 @@ export default function PhotoUpload({
     }
   };
 
-  const removePhoto = (index: number) => {
-    const newPhotos = photos.filter((_, i) => i !== index);
-    onPhotosUpdate(newPhotos);
+  const removePhoto = async (index: number) => {
+    const photoUrl = photos[index];
+    console.log('PhotoUpload: Starting photo deletion for URL:', photoUrl);
+    
+    try {
+      // Extract the file path from the URL
+      const urlParts = photoUrl.split('/storage/v1/object/public/UNITS/');
+      if (urlParts.length === 2) {
+        const filePath = urlParts[1];
+        console.log('PhotoUpload: Extracted file path for deletion:', filePath);
+        
+        // Delete from Supabase Storage
+        const { data, error } = await supabase.storage
+          .from('UNITS')
+          .remove([filePath]);
+        
+        if (error) {
+          console.error('PhotoUpload: Storage deletion error:', error);
+          toast({
+            title: 'Deletion failed',
+            description: `Failed to delete photo from storage: ${error.message}`,
+            variant: 'destructive'
+          });
+          return;
+        }
+        
+        console.log('PhotoUpload: Storage deletion successful:', data);
+      } else {
+        console.warn('PhotoUpload: Could not extract file path from URL:', photoUrl);
+      }
+      
+      // Remove from local array
+      const newPhotos = photos.filter((_, i) => i !== index);
+      console.log('PhotoUpload: Updating photos array from', photos.length, 'to', newPhotos.length);
+      onPhotosUpdate(newPhotos);
+      
+      toast({
+        title: 'Photo deleted',
+        description: 'Photo has been successfully removed'
+      });
+      
+    } catch (error) {
+      console.error('PhotoUpload: Unexpected deletion error:', error);
+      toast({
+        title: 'Deletion failed',
+        description: 'An unexpected error occurred while deleting the photo',
+        variant: 'destructive'
+      });
+    }
   };
 
   const openFileDialog = () => {
@@ -234,6 +280,7 @@ export default function PhotoUpload({
                     variant="destructive"
                     className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 h-6 w-6"
                     onClick={() => removePhoto(index)}
+                    disabled={uploading}
                   >
                     <X className="h-3 w-3" />
                   </Button>
