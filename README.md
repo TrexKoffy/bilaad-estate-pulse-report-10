@@ -1,73 +1,35 @@
-# Welcome to your Lovable project
+# Bilaad Realty - Web Platform
 
-## Project info
+This is the official website for **Bilaad Realty**, a premium real estate development company focused on sustainable urban housing and luxury lifestyle solutions.
 
-**URL**: https://lovable.dev/projects/10385f07-8373-4e42-919b-e0ead2c2bfd8
+## 🏠 Project Overview
 
-## How can I edit this code?
+The platform is designed to showcase luxury property listings, highlight sustainable building practices, and provide a seamless interface for potential homeowners and investors to browse available projects.
 
-There are several ways of editing your application.
+## ✨ Key Features
 
-**Use Lovable**
+* **Property Showcases:** Detailed views of residential and commercial projects.
+* **Responsive Design:** Fully optimized for mobile, tablet, and desktop.
+* **Investment Portal:** Information for stakeholders and property investors.
+* **Contact & Inquiry:** Integrated forms for booking inspections and consultations.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/10385f07-8373-4e42-919b-e0ead2c2bfd8) and start prompting.
+## 🛠 Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+* **Frontend:** React / Next.js (TSX)
+* **Styling:** Tailwind CSS
+* **Deployment:** Vercel
 
-**Use your preferred IDE**
+## 📂 Project Structure
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+* `/src/app` - Main pages and routing.
+* `/src/components` - Reusable UI elements (Navbar, Footer, Property Cards).
+* `/public` - Images, logos, and icons.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 📄 License
 
-Follow these steps:
+This project is for internal use by Bilaad Realty.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Developed by: Anthony Olayemi
+**Developed by:** Anthony Olayemi
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/10385f07-8373-4e42-919b-e0ead2c2bfd8) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+**Website:** [bilaadprojects.com](https://bilaadprojects.com/)
