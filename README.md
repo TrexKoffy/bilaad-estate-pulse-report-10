@@ -29,7 +29,6 @@ The platform is designed to showcase luxury property listings, highlight sustain
 
 This project is for internal use by Bilaad Realty.
 
-Developed by: Anthony Olayemi
 **Developed by:** Anthony Olayemi
 
 **Website:** [bilaadprojects.com](https://bilaadprojects.com/)
